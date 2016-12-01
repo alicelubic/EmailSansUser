@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FisherCenterEmailForm</string>
+    <string name="dev_email">.</string>
+    <string name="dev_email_past">.</string>
+    <string name="edit_text_hint">Enter your email…</string>
+    <string name="edit_text_format_error">Please make sure your email is correctly formatted.</string>
+    <string name="body_text">vrideo link</string>
+    <string name="subject_text">for you!</string>
+    <string name="email_button_text">send email</string>
+
+    <string name="task_success_message">email sent</string>
+    <string name="task_failed_message">"oops, something went wrong. "</string>
+    <string name="invalid_email_message">email address is invalid</string>
+    <string name="task_failed_action">Try Again</string>
+
+</resources>
