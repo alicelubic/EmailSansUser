@@ -17,19 +17,14 @@
     <EditText
         android:id="@+id/user_input_et"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="textEmailAddress"/>
-
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:inputType="textEmailAddress"
+        android:hint="@string/edit_text_hint"/>
+
 
     <Button
         android:id="@+id/send_email_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/email_button_text"/>
 </LinearLayout>

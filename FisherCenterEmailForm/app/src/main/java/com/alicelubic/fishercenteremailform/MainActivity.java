@@ -1,5 +1,6 @@
 package com.alicelubic.fishercenteremailform;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,17 +20,22 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
-    String mUserEmail, mEmailPattern;
-    @BindString(R.string.dev_email) String mSenderEmail;
-    @BindString(R.string.dev_email_past) String mSenderPass;
-    @BindString(R.string.edit_text_hint) String mHint;
-    @BindString(R.string.edit_text_format_error) String mFormatError;
-    @BindString(R.string.subject_text) String mSubject;
-    @BindString(R.string.body_text) String mBody;
-    @BindString(R.string.email_button_text) String mButtonText;
-    @BindView(R.id.user_input_et) EditText mInputEt;
-    @BindView(R.id.send_email_button) Button mSend;
-    @BindView(R.id.progress_bar) ProgressBar mProgressBar;
+    String mUserEmail;
+    ProgressDialog mDialog;
+    @BindString(R.string.dev_email)
+    String mSenderEmail;
+    @BindString(R.string.dev_email_past)
+    String mSenderPass;
+    @BindString(R.string.edit_text_format_error)
+    String mFormatError;
+    @BindString(R.string.subject_text)
+    String mSubject;
+    @BindString(R.string.body_text)
+    String mBody;
+    @BindView(R.id.user_input_et)
+    EditText mInputEt;
+    @BindView(R.id.send_email_button)
+    Button mSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,36 +43,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-
-        mEmailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-        mInputEt.setHint(mHint);
-        mSend.setText(mButtonText);
         mSend.setOnClickListener(MainActivity.this);
-
-
     }
 
-    public boolean isValidInput() {
-        mUserEmail = mInputEt.getText().toString().trim();
-
-        String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(emailPattern);
-        Matcher matcher = pattern.matcher(mUserEmail);
-        return matcher.matches();
-//    return !TextUtils.isEmpty(mUserEmail) &&
-//            Patterns.EMAIL_ADDRESS.matcher(mUserEmail).matches();
-    }
 
     @Override
     public void onClick(View v) {
-        if (isValidInput()) {
-            new SendEmailTask(v).execute();
-            mProgressBar.setVisibility(View.VISIBLE);
-        } else {
-            Log.d(TAG, "onClick: mUserEmail is not valid : "+mUserEmail);
-            mInputEt.setError(mFormatError);
-        }
+        if(v.getId()==R.id.send_email_button){
+
+            //check for valid input
+            if (isValidInput()) {
+                new SendEmailTask(v).execute();
+                mInputEt.setText("");
+                showProgressDialog();
+            } else {
+                //otherwise show an error
+                Log.d(TAG, "onClick: mUserEmail is not valid : " + mUserEmail);
+                mInputEt.setError(mFormatError);
+                //TODO account for errors other than just formatting
+            }
+        }//else if it's the send sms button instead
+
 
     }
 
@@ -88,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mBody,
                         mSenderEmail,
                         mUserEmail);
+                //TODO make sure it doesn't always return true (which is whats happening currently)
+                //TODO figure out how to make sure the email actually sent. some sort of completion listener...?
                 return true;
             } catch (Exception e) {
                 Log.e("SendEmail", e.getMessage(), e);
@@ -95,26 +94,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-
-            for (int i = 0; i < values.length; i++) {
-                mProgressBar.setProgress(i);
-            }
-
-        }
-
         @Override
         protected void onPostExecute(Boolean bool) {
             super.onPostExecute(bool);
-
-            mProgressBar.setVisibility(View.GONE);
-            mInputEt.setText("");
-
             if (!bool) {
-                Snackbar.make(mView, R.string.task_failed_message, Snackbar.LENGTH_LONG).setAction(R.string.task_failed_action, new View.OnClickListener() {
+                //let the user know it didn't work, action will try again
+                Snackbar.make(mView, R.string.task_failed_message, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.task_failed_action, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         new SendEmailTask(mView).execute();
@@ -122,11 +108,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }).show();
 
             } else {
+                //let user know that it did work
+                mDialog.dismiss();
                 Snackbar.make(mView, R.string.task_success_message, Snackbar.LENGTH_SHORT)
                         .show();
+
             }
 
         }
     }
 
+
+    public void showProgressDialog() {
+        mDialog = new ProgressDialog(MainActivity.this);
+        mDialog.setMessage(getString(R.string.progress_dialog_message));
+        mDialog.setIndeterminate(true);
+        mDialog.show();
+    }
+    public boolean isValidInput() {
+        mUserEmail = mInputEt.getText().toString().trim();
+
+        String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(mUserEmail);
+        return matcher.matches();
+
+    }
 }
