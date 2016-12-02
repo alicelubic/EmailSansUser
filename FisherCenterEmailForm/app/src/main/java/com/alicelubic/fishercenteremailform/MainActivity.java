@@ -3,14 +3,15 @@ package com.alicelubic.fishercenteremailform;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,18 +25,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ProgressDialog mDialog;
     @BindString(R.string.dev_email)
     String mSenderEmail;
-    @BindString(R.string.dev_email_past)
+    @BindString(R.string.dev_email_pass)
     String mSenderPass;
     @BindString(R.string.edit_text_format_error)
     String mFormatError;
     @BindString(R.string.subject_text)
     String mSubject;
-    @BindString(R.string.body_text)
-    String mBody;
+    //    @BindString(R.string.body_text)
+//    String mBody;
     @BindView(R.id.user_input_et)
     EditText mInputEt;
     @BindView(R.id.send_email_button)
     Button mSend;
+    @BindView(R.id.user_inputlayout)
+    TextInputLayout mInputLayout;
+
+    @BindString(R.string.link1)
+    String mLink1;
+    @BindString(R.string.link2)
+    String mLink2;
+    @BindString(R.string.link3)
+    String mLink3;
+    @BindString(R.string.link4)
+    String mLink4;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,45 +57,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ButterKnife.bind(this);
         mSend.setOnClickListener(MainActivity.this);
+
+
+    }
+
+    public String pickRandomLink() {
+        String[] links = {mLink1, mLink2, mLink3, mLink4};
+        Random random = new Random();
+        int i = random.nextInt(links.length);
+        return links[i];
     }
 
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==R.id.send_email_button){
+//        if(v.getId()==R.id.send_email_button){
 
-            //check for valid input
-            if (isValidInput()) {
-                new SendEmailTask(v).execute();
-                mInputEt.setText("");
-                showProgressDialog();
-            } else {
-                //otherwise show an error
-                Log.d(TAG, "onClick: mUserEmail is not valid : " + mUserEmail);
-                mInputEt.setError(mFormatError);
-                //TODO account for errors other than just formatting
-            }
-        }//else if it's the send sms button instead
+        //check for valid input
+        if (isValidInput()) {
+
+            new SendEmailTask(v).execute(pickRandomLink());
+            mInputEt.setText("");
+            showProgressDialog();
+        } else {
+            //otherwise show an error
+            Log.d(TAG, "onClick: mUserEmail is not valid : " + mUserEmail);
+            mInputLayout.setError(mFormatError);
+            //TODO account for errors other than just formatting
+        }
+//        }
 
 
     }
 
 
-    public class SendEmailTask extends AsyncTask<Void, Integer, Boolean> {
+    public class SendEmailTask extends AsyncTask<String, Integer, Boolean> {
         View mView;
+
 
         SendEmailTask(View view) {
             mView = view;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(String... params) {
+
 
             try {
                 GMailSender sender = new GMailSender(mSenderEmail,
                         mSenderPass);
                 sender.sendMail(mSubject,
-                        mBody,
+                        params[0],
                         mSenderEmail,
                         mUserEmail);
                 //TODO make sure it doesn't always return true (which is whats happening currently)
@@ -101,11 +126,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //let the user know it didn't work, action will try again
                 Snackbar.make(mView, R.string.task_failed_message, Snackbar.LENGTH_LONG)
                         .setAction(R.string.task_failed_action, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new SendEmailTask(mView).execute();
-                    }
-                }).show();
+                            @Override
+                            public void onClick(View v) {
+                                new SendEmailTask(mView).execute();
+                            }
+                        }).show();
 
             } else {
                 //let user know that it did work
@@ -125,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDialog.setIndeterminate(true);
         mDialog.show();
     }
+
     public boolean isValidInput() {
         mUserEmail = mInputEt.getText().toString().trim();
 

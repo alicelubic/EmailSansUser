@@ -1,10 +1,9 @@
 <resources>
-    <string name="app_name">FisherCenterEmailForm</string>
-    <string name="dev_email">o</string>
-    <string name="dev_email_past">!</string>
+    <string name="app_name">Foundation for Healing</string>
+    <string name="dev_email">fm</string>
+    <string name="dev_email_pass">f</string>
     <string name="edit_text_hint">Enter your email…</string>
     <string name="edit_text_format_error">Please make sure your email is correctly formatted.</string>
-    <string name="body_text">vrideo link</string>
     <string name="subject_text">for you!</string>
     <string name="email_button_text">send email</string>
 
@@ -13,5 +12,12 @@
     <string name="invalid_email_message">email address is invalid</string>
     <string name="task_failed_action">Try Again</string>
     <string name="progress_dialog_message">Sending...</string>
+
+    <string name="link1">link1</string>
+    <string name="link2">link2</string>
+    <string name="link3">link3</string>
+    <string name="link4">link4</string>
+
+
 
 </resources>
