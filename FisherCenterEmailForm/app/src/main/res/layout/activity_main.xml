@@ -36,4 +36,18 @@
         android:shadowRadius="5"
         android:background="@drawable/buttonshape"
         android:text="@string/email_button_text"/>
+
+
+    <EditText
+        android:id="@+id/temp_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="phone"
+        android:layout_margin="16dp"/>
+    <Button
+        android:id="@+id/temp_button"
+        android:layout_below="@id/temp_et"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="send sms"/>
 </RelativeLayout>

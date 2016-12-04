@@ -1,6 +1,7 @@
 package com.alicelubic.fishercenteremailform;
 
 import android.app.ProgressDialog;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.alicelubic.fishercenteremailform.email_reqs.GMailSender;
+
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "Main";
     String mUserEmail;
     ProgressDialog mDialog;
     @BindString(R.string.dev_email)
@@ -31,8 +34,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String mFormatError;
     @BindString(R.string.subject_text)
     String mSubject;
-    //    @BindString(R.string.body_text)
-//    String mBody;
     @BindView(R.id.user_input_et)
     EditText mInputEt;
     @BindView(R.id.send_email_button)
@@ -49,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindString(R.string.link4)
     String mLink4;
 
+    EditText tempEt;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,36 +60,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ButterKnife.bind(this);
         mSend.setOnClickListener(MainActivity.this);
+        setTypefaces();
 
 
-    }
+        //temp
+        Button button = (Button) findViewById(R.id.temp_button);
+        tempEt = (EditText) findViewById(R.id.temp_et);
+        button.setOnClickListener(this);
 
-    public String pickRandomLink() {
-        String[] links = {mLink1, mLink2, mLink3, mLink4};
-        Random random = new Random();
-        int i = random.nextInt(links.length);
-        return links[i];
     }
 
 
     @Override
     public void onClick(View v) {
-//        if(v.getId()==R.id.send_email_button){
+        if (v.getId() == R.id.send_email_button) {
 
-        //check for valid input
-        if (isValidInput()) {
+            //check for valid input
+            if (isValidInput()) {
 
-            new SendEmailTask(v).execute(pickRandomLink());
-            mInputEt.setText("");
-            showProgressDialog();
-        } else {
-            //otherwise show an error
-            Log.d(TAG, "onClick: mUserEmail is not valid : " + mUserEmail);
-            mInputLayout.setError(mFormatError);
-            //TODO account for errors other than just formatting
+                new SendEmailTask(v).execute(getRandomLink());
+                mInputEt.setText("");
+                showProgressDialog();
+            } else {
+                //otherwise show an error
+                Log.d(TAG, "onClick: mUserEmail is not valid : " + mUserEmail);
+                mInputLayout.setError(mFormatError);
+                //TODO account for errors other than just formatting
+            }
+
+        } else if (v.getId() == R.id.temp_button) {
+
+            SMSSender sender = new SMSSender(this, tempEt.getText().toString(), "4:09");
+            sender.sendSMS();
         }
-//        }
-
 
     }
 
@@ -160,4 +166,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return matcher.matches();
 
     }
+
+    public void setTypefaces() {
+        Typeface hnLight = Typeface.createFromAsset(getAssets(), getString(R.string.helvetica_neue_light_path));
+        Typeface hn = Typeface.createFromAsset(getAssets(), getString(R.string.helvetica_neue_path));
+        mInputLayout.setTypeface(hnLight);
+        mInputEt.setTypeface(hn);
+        mSend.setTypeface(hn);
+    }
+
+    public String getRandomLink() {
+        String[] links = {mLink1, mLink2, mLink3, mLink4};
+        Random random = new Random();
+        int i = random.nextInt(links.length);
+        return links[i];
+    }
+
 }

@@ -13,6 +13,7 @@
 
     <style name="InputLayout" parent="TextAppearance.AppCompat.Large">
         <item name="android:textSize">26sp</item>
+        <item name="android:fontFamily">s</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textColorHint">@color/white</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -24,7 +25,7 @@
     </style>
 
     <style name="MainLayout" parent="AppTheme">
-        <item name="android:background">@color/background_greenish</item>
+        <item name="android:background">@color/colorPrimary</item>
         <item name="android:paddingBottom">@dimen/activity_vertical_margin</item>
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>

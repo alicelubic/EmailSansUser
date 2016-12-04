@@ -1,4 +1,4 @@
-package com.alicelubic.fishercenteremailform;
+package com.alicelubic.fishercenteremailform.email_reqs;
 
 /**
  * Created by owlslubic on 12/1/16.
@@ -8,6 +8,10 @@ import java.security.AccessController;
 import java.security.Provider;
 
 public final class JSSEProvider extends Provider {
+/**
+ * defining a provider using the harmony project to
+ * enable secure internet communications
+ * */
 
     public JSSEProvider() {
         super("HarmonyJSSE", 1.0, "Harmony JSSE Provider");

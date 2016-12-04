@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Foundation for Healing</string>
-    <string name="dev_email">fm</string>
-    <string name="dev_email_pass">f</string>
+
+   
+
     <string name="edit_text_hint">Enter your email…</string>
     <string name="edit_text_format_error">Please make sure your email is correctly formatted.</string>
     <string name="subject_text">for you!</string>
@@ -17,7 +18,8 @@
     <string name="link2">link2</string>
     <string name="link3">link3</string>
     <string name="link4">link4</string>
-
+    <string name="helvetica_neue_light_path">helvetica_neue_light.ttf</string>
+    <string name="helvetica_neue_path">helvetica_neue.ttf</string>
 
 
 </resources>
