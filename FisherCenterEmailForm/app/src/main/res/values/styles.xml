@@ -30,7 +30,22 @@
         <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingTop">@dimen/activity_vertical_margin</item>
+        <item name="android:gravity">center</item>
         <item name="android:focusableInTouchMode">true</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:shadowRadius">5</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_marginRight">6dp</item>
+        <item name="android:layout_marginLeft">6dp</item>
+        <item name="android:shadowColor">@color/button_shadow</item>
+        <item name="android:background">@drawable/buttonshape</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+
     </style>
 
 </resources>

@@ -2,24 +2,27 @@
     <string name="app_name">Foundation for Healing</string>
 
    
-
-    <string name="edit_text_hint">Enter your email…</string>
+    <string name="edit_text_hint">Enter email or phone number…</string>
     <string name="edit_text_format_error">Please make sure your email is correctly formatted.</string>
-    <string name="subject_text">for you!</string>
-    <string name="email_button_text">send email</string>
+    <string name="subject_text">For you!</string>
+    <string name="email_button_text">Send as email</string>
+    <string name="send_sms">send as sms</string>
 
-    <string name="task_success_message">email sent</string>
-    <string name="task_failed_message">"oops, something went wrong. "</string>
+
+    <string name="task_success_message">sent</string>
+    <string name="task_failed_message">"oops, something went wrong."</string>
     <string name="invalid_email_message">email address is invalid</string>
     <string name="task_failed_action">Try Again</string>
-    <string name="progress_dialog_message">Sending...</string>
+    <string name="progress_dialog_message">Sending…</string>
 
     <string name="link1">link1</string>
     <string name="link2">link2</string>
     <string name="link3">link3</string>
     <string name="link4">link4</string>
+
     <string name="helvetica_neue_light_path">helvetica_neue_light.ttf</string>
     <string name="helvetica_neue_path">helvetica_neue.ttf</string>
+    <string name="no_internet_connection">No internet connection detected</string>
 
 
 </resources>

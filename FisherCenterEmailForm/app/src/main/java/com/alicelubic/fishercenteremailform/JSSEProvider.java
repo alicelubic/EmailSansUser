@@ -1,4 +1,4 @@
-package com.alicelubic.fishercenteremailform.email_reqs;
+package com.alicelubic.fishercenteremailform;
 
 /**
  * Created by owlslubic on 12/1/16.

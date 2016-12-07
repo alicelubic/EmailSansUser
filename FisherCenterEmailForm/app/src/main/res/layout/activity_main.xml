@@ -1,53 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     style="@style/MainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.alicelubic.fishercenteremailform.MainActivity">
 
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/user_inputlayout"
         style="@style/InputLayout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/edit_text_hint">
+        android:focusableInTouchMode="true"
+        android:hint="@string/edit_text_hint"
+        android:padding="6dp">
 
         <EditText
             android:id="@+id/user_input_et"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:inputType="textEmailAddress"
-            android:minEms="9"
-            android:textSize="30sp"
-           />
+            android:textSize="25sp"/>
     </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/send_email_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_inputlayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:shadowRadius="5"
-        android:background="@drawable/buttonshape"
-        android:text="@string/email_button_text"/>
-
-
-    <EditText
-        android:id="@+id/temp_et"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:layout_margin="16dp"/>
-    <Button
-        android:id="@+id/temp_button"
-        android:layout_below="@id/temp_et"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="send sms"/>
-</RelativeLayout>
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/send_sms_button"
+            style="@style/ButtonStyle"
+            android:text="@string/send_sms"
+            />
+
+        <Button
+            android:id="@+id/send_email_button"
+            style="@style/ButtonStyle"
+            android:text="@string/email_button_text"
+            />
+    </LinearLayout>
+</LinearLayout>

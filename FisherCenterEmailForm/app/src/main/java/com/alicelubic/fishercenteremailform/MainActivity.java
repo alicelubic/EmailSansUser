@@ -2,17 +2,14 @@ package com.alicelubic.fishercenteremailform;
 
 import android.app.ProgressDialog;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.alicelubic.fishercenteremailform.email_reqs.GMailSender;
 
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -24,8 +21,9 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Main";
-    String mUserEmail;
+    String mUserInput;
     ProgressDialog mDialog;
+
     @BindString(R.string.dev_email)
     String mSenderEmail;
     @BindString(R.string.dev_email_pass)
@@ -37,9 +35,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.user_input_et)
     EditText mInputEt;
     @BindView(R.id.send_email_button)
-    Button mSend;
+    Button mEmailButton;
     @BindView(R.id.user_inputlayout)
     TextInputLayout mInputLayout;
+    @BindView(R.id.send_sms_button)
+    Button mSmsButton;
 
     @BindString(R.string.link1)
     String mLink1;
@@ -50,52 +50,80 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @BindString(R.string.link4)
     String mLink4;
 
-    EditText tempEt;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        mSend.setOnClickListener(MainActivity.this);
+        mEmailButton.setOnClickListener(this);
+        mSmsButton.setOnClickListener(this);
         setTypefaces();
-
-
-        //temp
-        Button button = (Button) findViewById(R.id.temp_button);
-        tempEt = (EditText) findViewById(R.id.temp_et);
-        button.setOnClickListener(this);
 
     }
 
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.send_email_button) {
+        //first, clean up
+        cleanUpUI();
 
-            //check for valid input
-            if (isValidInput()) {
+        //then send the link
+        if(isValidInput()) {
 
-                new SendEmailTask(v).execute(getRandomLink());
-                mInputEt.setText("");
-                showProgressDialog();
-            } else {
-                //otherwise show an error
-                Log.d(TAG, "onClick: mUserEmail is not valid : " + mUserEmail);
-                mInputLayout.setError(mFormatError);
-                //TODO account for errors other than just formatting
+            switch (v.getId()) {
+                case R.id.send_email_button:
+                    new GMailSender(this)
+                            .executeSendEmailTask(mUserInput, getRandomLink(), v, mDialog);
+                    break;
+                case R.id.send_sms_button:
+                    new SmsSender(this)
+                            .executeSendSMSTask(mUserInput,getRandomLink(),v, mDialog);
+                    break;
             }
+        }
+        else {
+            //otherwise show an error
+            Log.d(TAG, "onClick: mUserInput is not valid : " + mUserInput);
+            setError();
 
-        } else if (v.getId() == R.id.temp_button) {
-
-            SMSSender sender = new SMSSender(this, tempEt.getText().toString(), "4:09");
-            sender.sendSMS();
         }
 
+        }
+
+    public void setError(){
+        //if the error is a format one:
+        mInputLayout.setError(mFormatError);
+        //TODO account for errors other than just formatting
     }
 
+
+        /*switch (v.getId()) {
+            case R.id.send_email_button:
+                //check for valid input
+                if (isValidInput()) {
+                    showProgressDialog();
+                    mInputEt.clearComposingText();
+                    new GMailSender(this)
+                            .executeSendEmailTask(v, getRandomLink(), mUserInput, mDialog);
+
+                } else {
+                    //otherwise show an error
+                    Log.d(TAG, "onClick: mUserInput is not valid : " + mUserInput);
+                    mInputLayout.setError(mFormatError);
+                    //TODO account for errors other than just formatting
+                }
+                break;
+            case R.id.temp_button:
+                new SmsSender(this, tempEt.getText().toString(), getRandomLink()).executeSendSMSTask(v, mDialog);
+                break;
+        }*/
+
+
+
+
+
+/*
 
     public class SendEmailTask extends AsyncTask<String, Integer, Boolean> {
         View mView;
@@ -108,15 +136,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Boolean doInBackground(String... params) {
 
-
             try {
                 GMailSender sender = new GMailSender(mSenderEmail,
                         mSenderPass);
                 sender.sendMail(mSubject,
                         params[0],
                         mSenderEmail,
-                        mUserEmail);
+                        mUserInput);
+
                 //TODO make sure it doesn't always return true (which is whats happening currently)
+
                 //TODO figure out how to make sure the email actually sent. some sort of completion listener...?
                 return true;
             } catch (Exception e) {
@@ -148,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+*/
 
 
     public void showProgressDialog() {
@@ -158,21 +188,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean isValidInput() {
-        mUserEmail = mInputEt.getText().toString().trim();
+        mUserInput = mInputEt.getText().toString().trim();
+        if(mUserInput.contains("@")){
+            String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+            Pattern pattern = Pattern.compile(emailPattern);
+            Matcher matcher = pattern.matcher(mUserInput);
+            return matcher.matches();
+        }
+        else{
+            //else its a phone nmber. return true in the meantime but...
+            // TODO figure out how to validate a phone num...?
+            return true;
+        }
 
-        String emailPattern = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(emailPattern);
-        Matcher matcher = pattern.matcher(mUserEmail);
-        return matcher.matches();
 
     }
+
+
 
     public void setTypefaces() {
         Typeface hnLight = Typeface.createFromAsset(getAssets(), getString(R.string.helvetica_neue_light_path));
         Typeface hn = Typeface.createFromAsset(getAssets(), getString(R.string.helvetica_neue_path));
         mInputLayout.setTypeface(hnLight);
         mInputEt.setTypeface(hn);
-        mSend.setTypeface(hn);
+        mEmailButton.setTypeface(hn);
+        mSmsButton.setTypeface(hn);
     }
 
     public String getRandomLink() {
@@ -181,5 +221,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int i = random.nextInt(links.length);
         return links[i];
     }
+
+    public void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+        }
+    }
+    public void cleanUpUI(){
+        hideKeyboard();
+        showProgressDialog();
+        mInputEt.clearComposingText();
+    }
+
 
 }
