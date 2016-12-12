@@ -56,37 +56,6 @@ public class SmsSender {
     }
 
 
-    private void parseJson(String responseString) throws JSONException {
-
-        JSONObject root = new JSONObject(responseString);
-        JSONObject response = root.getJSONObject("Response");
-        Log.d(TAG, "response Status: " + response.getString("Status"));
-        Log.d(TAG, "response Code: " + response.getString("Code"));
-
-        JSONObject entry = response.getJSONObject("Entry");
-        Log.d(TAG, "Message ID: " + entry.getString("ID"));
-        Log.d(TAG, "Subject: " + entry.getString("Subject"));
-        Log.d(TAG, "Message: " + entry.getString("Message"));
-        Log.d(TAG, "Message Type ID: " + entry.getString("MessageTypeID"));
-        Log.d(TAG, "Total Recipients: " + entry.getString("RecipientsCount"));
-        Log.d(TAG, "Credits Charged: " + entry.getString("Credits"));
-        Log.d(TAG, "Time To Send: " + entry.getString("StampToSend"));
-        Log.d(TAG, "Phone Numbers: " + entry.optString("PhoneNumbers", ""));
-        Log.d(TAG, "Locally Opted Out Numbers: " + entry.optString("LocalOptOuts", ""));
-        Log.d(TAG, "Globally Opted Out Numbers: " + entry.optString("GlobalOptOuts", ""));
-    }
-
-    private String readIt(InputStream is) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        String read;
-        while ((read = reader.readLine()) != null) {
-            builder.append(read);
-        }
-        return builder.toString();
-    }
-
-
     private class SendSmsTask extends AsyncTask<Void, Void, Boolean> {
         private ProgressDialog mDialog;
         private View mView;
@@ -164,19 +133,47 @@ public class SmsSender {
                         .setAction(R.string.task_failed_action, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                new SmsSender(mContext).executeSendSMSTask(mPhoneNum, mLink,mView,mDialog);
+                                new SmsSender(mContext).executeSendSMSTask(mPhoneNum, mLink, mView, mDialog);
                             }
                         }).show();
+            } else {
+                //let user know that it did work
+                String message = String.format(mContext.getResources().getString(R.string.task_success_message), "to " + mPhoneNum);
+                Snackbar.make(mView, message, Snackbar.LENGTH_SHORT)
+                        .show();
             }
-            //let user know that it did work
-            Snackbar.make(mView, R.string.task_success_message, Snackbar.LENGTH_SHORT)
-                    .show();
-
         }
+    }
 
-        //TODO make a snackbar to confirm, adjust parameters for view accordingly
 
+    private void parseJson(String responseString) throws JSONException {
 
+        JSONObject root = new JSONObject(responseString);
+        JSONObject response = root.getJSONObject("Response");
+        Log.d(TAG, "response Status: " + response.getString("Status"));
+        Log.d(TAG, "response Code: " + response.getString("Code"));
+
+        JSONObject entry = response.getJSONObject("Entry");
+        Log.d(TAG, "Message ID: " + entry.getString("ID"));
+        Log.d(TAG, "Subject: " + entry.getString("Subject"));
+        Log.d(TAG, "Message: " + entry.getString("Message"));
+        Log.d(TAG, "Message Type ID: " + entry.getString("MessageTypeID"));
+        Log.d(TAG, "Total Recipients: " + entry.getString("RecipientsCount"));
+        Log.d(TAG, "Credits Charged: " + entry.getString("Credits"));
+        Log.d(TAG, "Time To Send: " + entry.getString("StampToSend"));
+        Log.d(TAG, "Phone Numbers: " + entry.optString("PhoneNumbers", ""));
+        Log.d(TAG, "Locally Opted Out Numbers: " + entry.optString("LocalOptOuts", ""));
+        Log.d(TAG, "Globally Opted Out Numbers: " + entry.optString("GlobalOptOuts", ""));
+    }
+
+    private String readIt(InputStream is) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String read;
+        while ((read = reader.readLine()) != null) {
+            builder.append(read);
+        }
+        return builder.toString();
     }
 
 

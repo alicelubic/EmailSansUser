@@ -71,11 +71,9 @@ public class GMailSender extends javax.mail.Authenticator {
             message.setSender(new InternetAddress(sender));
             message.setSubject(subject);
             message.setDataHandler(handler);
-            if (recipients.indexOf(',') > 0)
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients));
-            else
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress(recipients));
             Transport.send(message);
+
         } catch (Exception e) {
             Log.e(TAG, "sendMail: ", e);
             Log.e(TAG, "sendMail: " + Arrays.toString(e.getStackTrace()));
@@ -86,7 +84,6 @@ public class GMailSender extends javax.mail.Authenticator {
     public void executeSendEmailTask(String userEmail, String body, View view, ProgressDialog progressDialog) {
         new SendEmailTask(userEmail, body, view, progressDialog).execute();
     }
-
 
 
     public class SendEmailTask extends AsyncTask<Void, Void, Boolean> {
@@ -145,7 +142,8 @@ public class GMailSender extends javax.mail.Authenticator {
 
             } else {
                 //let user know that it did work
-                Snackbar.make(mView, R.string.task_success_message, Snackbar.LENGTH_SHORT)
+                String message = String.format(mContext.getResources().getString(R.string.task_success_message), "to " + mUserEmail);
+                Snackbar.make(mView, message, Snackbar.LENGTH_SHORT)
                         .show();
 
             }

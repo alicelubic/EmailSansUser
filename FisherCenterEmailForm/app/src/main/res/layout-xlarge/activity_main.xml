@@ -27,7 +27,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:inputType="textEmailAddress"
-            android:textSize="20sp"
+            android:textSize="35sp"
             android:gravity="center_horizontal"/>
     </android.support.design.widget.TextInputLayout>
 
@@ -40,12 +40,14 @@
         <Button
             android:id="@+id/send_sms_button"
             style="@style/ButtonStyle"
+            android:textSize="26sp"
             android:text="@string/send_sms"
             />
 
         <Button
             android:id="@+id/send_email_button"
             style="@style/ButtonStyle"
+            android:textSize="26sp"
             android:text="@string/email_button_text"
             />
     </LinearLayout>
